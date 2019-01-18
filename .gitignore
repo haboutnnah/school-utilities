@@ -1,0 +1,6 @@
+VirtualEnv/**
+*.csv
+*.xlsx
+*.xlsb
+*.ics
+parse_timetable/broken_students.py
