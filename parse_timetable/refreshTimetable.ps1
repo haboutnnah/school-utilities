@@ -26,7 +26,7 @@ If (-Not $IconExists){
 
 
 While($true){
-    $WebsiteContent = Invoke-WebRequest -Uri $Url -UserAgent "Script to refresh timetable page until change is found [https://gist.github.com/tf2manu994/57ddb19d6c7549f7d3881b76aea6a3b0] <contact@manmeetgill.com>" 
+    $WebsiteContent = Invoke-WebRequest -Uri $Url -UserAgent "Script to refresh timetable page until change is found [https://gist.github.com/tf2manu994/57ddb19d6c7549f7d3881b76aea6a3b0] <contact@hannahi.com>"
     $WebsiteContent.ParsedHtml.body | Select-Object -ExpandProperty innerHTML | Out-File -FilePath current-site.html
     $WebsiteHash = Get-FileHash current-site.html -Algorithm MD5
     $WebsiteHash = $WebsiteHash.Hash

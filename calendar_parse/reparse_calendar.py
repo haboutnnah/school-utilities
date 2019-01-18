@@ -1,8 +1,13 @@
 import os
 import requests
+from colorama import init as colourinit
+from colorama import Fore
+from colorama import Style
 
+colourinit()
 FLAG: bool = False
 TEACHER: str = ''
+NUMBER: int = 0
 studentid = 1091  # for Hannah Ivy
 
 new_timetable: str = 'fixed_timetable.ics'
@@ -27,6 +32,8 @@ for line in file:
         line = line.replace('SUMMARY: ', '')
         subject = line.split(": ")[1]
         new_file.write(f'SUMMARY:{subject.title()} with {TEACHER.title()}\n')
+        print(f"Processed {Fore.CYAN}{subject.title()}{Style.RESET_ALL} with {Fore.CYAN}{TEACHER.title()}{Style.RESET_ALL}")
+        NUMBER += 1
     elif line.startswith('DESCRIPTION:'):
         line = line.replace('DESCRIPTION:', '')
         line: str = line.strip()
@@ -42,3 +49,5 @@ for line in file:
         new_file.write(f'LOCATION:Room {room.upper()}\n')
     else:
         new_file.write(line)
+
+print(f"{Fore.CYAN}Processed {Fore.RED}{NUMBER}{Fore.CYAN} events!{Style.RESET_ALL}")
