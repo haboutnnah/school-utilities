@@ -30,7 +30,7 @@ for line in file:
         line: str = line.strip()
         FLAG = False
         line = line.replace('SUMMARY: ', '')
-        subject = line.split(": ")[1]
+        subject = line.split(": ")[1].replace("YEAR 12", "").strip()
         new_file.write(f'SUMMARY:{subject.title()} with {TEACHER.title()}\n')
         print(f"Processed {Fore.CYAN}{subject.title()}{Style.RESET_ALL} with {Fore.CYAN}{TEACHER.title()}{Style.RESET_ALL}")
         NUMBER += 1
