@@ -1,4 +1,5 @@
 import os
+import sys
 import requests
 from colorama import init as colourinit
 from colorama import Fore
@@ -8,7 +9,10 @@ colourinit()
 FLAG: bool = False
 TEACHER: str = ''
 NUMBER: int = 0
-studentid = 1091  # for Hannah Ivy
+if len(sys.argv) == 2:
+    studentid = int(sys.argv[1])
+else:
+    studentid = 1091  # for Hannah Ivy
 
 new_timetable: str = 'fixed_timetable.ics'
 unparsed_timetable: str = 'timetable.ics'
