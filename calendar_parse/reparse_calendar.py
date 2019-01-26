@@ -137,7 +137,7 @@ for line in unparsed_file:
     else:
         new_file.write(line)
 
-print(f"{Fore.CYAN}Stored the new file as \"{unparsed_timetable}\".{Style.RESET_ALL}")
+print(f"{Fore.CYAN}Stored the new file as \"{fixed_timetable}\".{Style.RESET_ALL}")
 
 print(f"{Fore.CYAN}Processed "
       f"{Fore.RED}{NUMBER}{Fore.CYAN} events!{Style.RESET_ALL}")
