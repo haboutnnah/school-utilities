@@ -4,14 +4,149 @@ import requests                          # To download the file
 from colorama import init as colourinit  # To make colours work on windows
 from colorama import Fore                # Change colour of text
 from colorama import Style               # Allows me to reset colour
+import dateutil.parser                   # Parses time
+from dateutil.tz import tzutc            # Converts time back
 
 colourinit()
+
+# Days
+
+STANDARD: dict  = {
+    "day"  : None,
+    "start": {
+            "p1": {
+                "hour": 8,
+                "minute": 40 
+            },
+            "p2": {
+                "hour": 9,
+                "minute": 44
+            },
+            "p3": {
+                "hour": 11,
+                "minute": 8
+            },
+            "p4": {
+                "hour": 12,
+                "minute": 12
+            },
+            "p5": {
+                "hour": 13,
+                "minute": 56
+            },
+    },
+    "end": {
+            "p1": {
+            "hour": 9,
+            "minute": 44 
+        },
+        "p2": {
+            "hour": 10,
+            "minute": 48
+        },
+        "p3": {
+            "hour": 12,
+            "minute": 12
+        },
+        "p4": {
+            "hour": 13,
+            "minute": 16
+        },
+        "p5": {
+            "hour": 15,
+            "minute": 00
+        },
+    }
+}
+
+WEDNESDAY: dict = {
+    "day": 3,
+    "start": {
+        "p1": {
+            "hour": 8,
+            "minute": 40 
+        },
+        "p2": {
+            "hour": 9,
+            "minute": 36
+        },
+        "p3": {
+            "hour": 10,
+            "minute": 52
+        },
+    },
+    "end": {
+        "p1": {
+            "hour": 9,
+            "minute": 36 
+        },
+        "p2": {
+            "hour": 10,
+            "minute": 32
+        },
+        "p3": {
+            "hour": 11,
+            "minute": 48
+        },
+    },
+}
+THURSDAY: dict = {
+    "day": 4,
+    "start": {
+        "p1": {
+            "hour": 8,
+            "minute": 40 
+        },
+        "p2": {
+            "hour": 9,
+            "minute": 41
+        },
+        "p3": {
+            "hour": 11,
+            "minute": 17
+        },
+        "p4": {
+            "hour": 12,
+            "minute": 18
+        },
+        "p5": {
+            "hour": 13,
+            "minute": 59
+        },
+    },
+    "end": {
+        "p1": {
+            "hour": 9,
+            "minute": 41 
+        },
+        "p2": {
+            "hour": 10,
+            "minute": 42
+        },
+        "p3": {
+            "hour": 12,
+            "minute": 18
+        },
+        "p4": {
+            "hour": 13,
+            "minute": 19
+        },
+        "p5": {
+            "hour": 15,
+            "minute": 0
+        },
+    }
+}
+
 FLAG: bool = False
 # Flag for if there is an event, so we can parse the next line
+
 TEACHER: str = ''
 # The teacher that we parse, as we put it later.
+
 NUMBER: int = 0
 # The number of events we have parsed, basically to flex
+
 ENDPOINT: str = "https://web1.normanhurb-h.schools.nsw.edu.au/"
 
 SUBJECTS, TEACHERS = {}, {}
@@ -75,9 +210,76 @@ def clean_line(line: str, title: str) -> str:
     return line.replace(title, "").strip()
 
 for line in unparsed_file:
+    oline = line[:]
     # If the previous line was a description (This line will be a title)
     # (Because Sentral puts titles after description)
-    if FLAG:
+    if line.startswith("DTSTART"):
+        line = clean_line(line, "DTSTART;VALUE=DATE-TIME:")
+        time = dateutil.parser.parse(line).astimezone()
+        weekday = time.isoweekday()
+        if weekday == WEDNESDAY["day"] or weekday == THURSDAY["day"]:
+            pd: str
+            for period, times in STANDARD["start"].items():
+                if time.hour == times["hour"] and time.minute == times["minute"]:
+                    pd = period
+                    break
+            else:
+                pd = -1
+                # its period 0 or 6
+                    
+            if pd != -1:
+                if weekday == WEDNESDAY["day"]: 
+                    if pd in WEDNESDAY["start"]:
+                        h = WEDNESDAY["start"][pd]["hour"]
+                        m = WEDNESDAY["start"][pd]["minute"]
+                        time = time.replace(hour=h, minute=m)
+                        time = time.astimezone(tzutc())
+                        new_file.write(f'DTSTART;VALUE=DATE-TIME:{time.strftime("%Y%m%dT%H%M%SZ")}\n')
+                elif weekday == THURSDAY["day"]: 
+                    if pd in THURSDAY["start"]:
+                        h = THURSDAY["start"][pd]["hour"]
+                        m = THURSDAY["start"][pd]["minute"]
+                        time = time.replace(hour=h, minute=m)
+                        time = time.astimezone(tzutc())
+                        new_file.write(f'DTSTART;VALUE=DATE-TIME:{time.strftime("%Y%m%dT%H%M%SZ")}\n')
+            else: 
+                new_file.write(oline)
+        else:
+            new_file.write(oline)
+
+    elif line.startswith("DTEND"):
+        line = clean_line(line, "DTEND;VALUE=DATE-TIME:")
+        time = dateutil.parser.parse(line).astimezone()
+        weekday = time.isoweekday()
+        if weekday == WEDNESDAY["day"] or weekday == THURSDAY["day"]:
+            pd: str
+            for period, times in STANDARD["end"].items():
+                if time.hour == times["hour"] and time.minute == times["minute"]:
+                    pd = period
+                    break
+            else:
+                pd = -1
+            if pd != -1:
+                if weekday == WEDNESDAY["day"]: 
+                    if pd in WEDNESDAY["end"]:
+                        h = WEDNESDAY["end"][pd]["hour"]
+                        m = WEDNESDAY["end"][pd]["minute"]
+                        time = time.replace(hour=h, minute=m)
+                        time = time.astimezone(tzutc())
+                        new_file.write(f'DTEND;VALUE=DATE-TIME:{time.strftime("%Y%m%dT%H%M%SZ")}\n')
+                elif weekday == THURSDAY["day"]: 
+                    if pd in THURSDAY["end"]:
+                        h = THURSDAY["end"][pd]["hour"]
+                        m = THURSDAY["end"][pd]["minute"]
+                        time = time.replace(hour=h, minute=m)
+                        time = time.astimezone(tzutc())
+                        new_file.write(f'DTEND;VALUE=DATE-TIME:{time.strftime("%Y%m%dT%H%M%SZ")}\n')
+            else:
+                new_file.write(oline)
+        else:
+            new_file.write(oline)
+
+    elif FLAG:
         # Remove preamble for parsing
         line = clean_line(line , 'SUMMARY: ')
 
