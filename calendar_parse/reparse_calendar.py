@@ -169,14 +169,22 @@ print(f"{Fore.CYAN}Deleted any pre-existing file(s).{Style.RESET_ALL}")
 if len(sys.argv) == 2:  # If we get a student id
     studentid = int(sys.argv[1])  # Declare it
 else:
-    studentid = 1091  # for Hannah Ivy
+    print(f"{Fore.CYAN}You can get your student id from the timetable site.")
+    print(f"https://web1.normanhurb-h.schools.nsw.edu.au/timetables/")
+    print(f"For instance, if when you click your name, your url looks like this:")
+    print(f"https://web1.normanhurb-h.schools.nsw.edu.au/timetables/timetable?student={Fore.RED}1091{Fore.CYAN}")
+    print(f"Then you enter in '{Fore.RED}1091{Fore.CYAN}'")
+    print(f"Student ID{Style.RESET_ALL}: ",end='')
+    studentid = int(input())  
 
+
+print(f"{Fore.CYAN}Downloading unparsed timetable for {studentid}.{Style.RESET_ALL}")
 
 # Download and write the corresponding timetable
 url = f"{ENDPOINT}timetables/timetable?student={studentid}&action=export"
 response = requests.get(url)
 
-print(f"{Fore.CYAN}Downloaded unparsed timetable.{Style.RESET_ALL}")
+print(f"{Fore.CYAN}Downloaded unparsed timetable for {studentid}.{Style.RESET_ALL}")
 
 # Write to the unparsed file
 with open(unparsed_timetable, 'wb') as unparsed_file:
@@ -344,12 +352,32 @@ print(f"{Fore.CYAN}Stored the new file as \"{fixed_timetable}\".{Style.RESET_ALL
 print(f"{Fore.CYAN}Processed "
       f"{Fore.RED}{NUMBER}{Fore.CYAN} events!{Style.RESET_ALL}")
 
-print(f"{Fore.YELLOW}Here are the subjects you have the most:{Style.RESET_ALL}")
+print(f"{Fore.YELLOW}Here are the subjects you have:{Style.RESET_ALL}")
 for subject, times in SUBJECTS.items():
     print("You have "
     f"{Fore.CYAN}{subject} {Fore.RED}{times}{Style.RESET_ALL} times a fortnight.")
 
-print(f"{Fore.YELLOW}Here are the teachers you have the most:{Style.RESET_ALL}")
+print(f"{Fore.YELLOW}Here are the teachers you have:{Style.RESET_ALL}")
 for teacher, times in TEACHERS.items():
     print("You have "
           f"{Fore.CYAN}{teacher} {Fore.RED}{times}{Style.RESET_ALL} times a fortnight.")
+print(f"=============================================")
+print(f"{Fore.BLUE} To download your new calendar, open "
+      f"{Fore.RED}fixed_timetable.ics{Fore.BLUE} from the "
+      f"sidebar on the left, and press {Fore.RED}Control "
+      f"{Fore.BLUE} or {Fore.RED}Command{Fore.BLUE} + {Fore.RED}A "
+      f"{Fore.BLUE} and then press {Fore.RED}Control{Fore.BLUE} "
+      f"or {Fore.RED}Command{Fore.BLUE} + {Fore.RED}C{Fore.BLUE}."
+      "\n"
+      f"Then, open {Fore.RED}Notepad or similar{Fore.BLUE} and save "
+      f"it to somewhere you will remember."
+      "\n"
+      f"Then, open Google Calendar, and press the three dots next to "
+      f"\"{Fore.RED}My calendars\"{Fore.BLUE}, and then press "
+      f"\"{Fore.RED}New calendar\"{Fore.BLUE}. Name it what you want, "
+      f"and then press \"{Fore.RED}Create calendar\"{Fore.BLUE}. Next, "
+      f"press \"{Fore.RED}Import & export\"{Fore.BLUE} from the left sidebar. "
+      f"Select the file you saved earlier, and change "
+      f"\"{Fore.RED}Add to calendar\"{Fore.BLUE} to the one we just made."
+      f"Now, just press \"{Fore.RED}Import\"{Fore.BLUE}, and you're done!"
+)
