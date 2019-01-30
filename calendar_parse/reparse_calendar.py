@@ -291,7 +291,7 @@ for line in unparsed_file:
         # Remove preamble for parsing
         line = clean_line(line , 'SUMMARY: ')
 
-        # We dealt with that flag
+        # We are dealing with that flag
         FLAG = False
 
         # Get the subject, given that it is after the first colon ("Teacher:")
@@ -302,7 +302,7 @@ for line in unparsed_file:
         if subject in SUBJECTS:
             SUBJECTS[subject] += 1
         else:
-            SUBJECTS[subject] = 0
+            SUBJECTS[subject] = 1
         # And write it in the file
         new_file.write(f'SUMMARY:{subject} with {TEACHER}\n')
 
@@ -331,7 +331,7 @@ for line in unparsed_file:
         if TEACHER in TEACHERS:
             TEACHERS[TEACHER] += 1
         else:
-            TEACHERS[TEACHER] = 0
+            TEACHERS[TEACHER] = 1
 
         PERIOD = arr[0].strip("Period: ")
 
